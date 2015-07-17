@@ -185,7 +185,10 @@ class ApplyResources(object):
         out = ''
         bastions = filter(lambda s:s.get('assign_floating_ip', False), servers)
         if bastions:
-            bastion = utils.get_ip_of_node(self.get_nova_client(), bastions[0]['name'])
+            bastion = None
+            while not bastion:
+                bastion = utils.get_ip_of_node(self.get_nova_client(), bastions[0]['name'])
+                time.sleep(2)
         else:
             bastion = None
 
@@ -194,7 +197,10 @@ class ApplyResources(object):
         out += '\n'
         for s in servers:
             out += 'Host %s\n' % (s['name'],)
-            ip = utils.get_ip_of_node(apply_resources.get_nova_client(),  s['name'])
+            ip = None
+            while not ip:
+                ip = utils.get_ip_of_node(apply_resources.get_nova_client(),  s['name'])
+                time.sleep(2)
             out += '    HostName %s\n' % (ip,)
             if not s.get('assign_floating_ip', False) and bastion:
                 out += '    ProxyCommand ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null %%r@%s nc %%h %%p\n' % (bastion,)

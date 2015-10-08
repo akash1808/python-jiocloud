@@ -44,7 +44,7 @@ class DeploymentOrchestrator(object):
     @property
     def consul(self):
         if not self._consul:
-            self._consul = session = consulate.Consulate(self.host, self.port)
+            self._consul = session = consulate.Session(self.host, self.port)
         return self._consul
 
     def trigger_update(self, new_version):
